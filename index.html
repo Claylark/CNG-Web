@@ -1,1094 +1,331 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="cupcake">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ElyNFC-CNG|爱莉NFC自定义卡号工具</title>
+    <title>ElyNFC-CNG | DaisyUI Edition (Partial Glass)</title>
+    <!-- Tailwind CSS & DaisyUI CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-gold: #d4af37;
-            --gold-light: #f0d87e;
-            --gold-dark: #b8860b;
-            --glass-bg: rgba(255, 255, 255, 0.2);
-            --glass-border: rgba(255, 255, 255, 0.3);
-            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Noto Sans SC', sans-serif;
-            transition: all 0.3s ease;
-        }
-        
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: linear-gradient(135deg, #1a237e, #5e35b1);
-            background-size: cover;
-            background-attachment: fixed;
-            color: #333;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-        }
-        
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: inherit;
-            z-index: -1;
-        }
-        
-        /* 顶部导航栏 - 纯金色 */
-        .top-bar {
-            background-color: var(--primary-gold);
-            color: #000;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-            margin-bottom: 30px;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #000;
-        }
-        
-        .logo i {
-            color: #7b1fa2;
-            animation: pulse 2s infinite;
-        }
-        
-        .full-title {
-            display: inline;
-        }
-        
-        .short-title {
-            display: none;
-        }
-        
-        .top-actions {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .action-btn {
-            background: rgba(255, 255, 255, 0.3);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.2rem;
-            color: #000;
-        }
-        
-        .action-btn:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: scale(1.1);
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        
-        /* 主内容区域 - iPadOS 13小组件风格 */
-        .widget-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto 30px;
-        }
-        
-        .widget {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border-radius: 24px;
-            box-shadow: var(--glass-shadow);
-            overflow: hidden;
-            border: 1px solid var(--glass-border);
-            padding: 25px;
-            min-height: 300px;
-        }
-        
-        .widget-lg {
-            grid-column: span 2;
-        }
-        
-        .widget-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--glass-border);
-        }
-        
-        .widget-header h2 {
-            font-size: 1.6rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-        }
-        
-        .widget-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 14px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            color: white;
-            backdrop-filter: blur(5px);
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-            position: relative;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 700;
-            color: white;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .input-wrapper {
-            position: relative;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 16px;
-            border: 1px solid var(--glass-border);
-            border-radius: 15px;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            font-family: 'Noto Sans SC', sans-serif;
-            backdrop-filter: blur(5px);
-        }
-        
-        input:focus, select:focus {
-            border-color: var(--primary-gold);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
-        }
-        
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        .input-hint {
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.8);
-            margin-top: 8px;
-            padding-left: 5px;
-            font-style: italic;
-        }
-        
-        .btn {
-            background: rgba(156, 39, 176, 0.7);
-            color: white;
-            border: none;
-            padding: 18px 30px;
-            font-size: 1.2rem;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            font-weight: 700;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            margin-top: 10px;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            font-family: 'Noto Sans SC', sans-serif;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(5px);
-        }
-        
-        .btn:hover {
-            background: rgba(123, 31, 162, 0.8);
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-        
-        .btn:active {
-            transform: translateY(-2px);
-        }
-        
-        .result-count {
-            background: rgba(156, 39, 176, 0.7);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            backdrop-filter: blur(5px);
-        }
-        
-        .card-list {
-            flex: 1;
-            max-height: 450px;
+        body { display: flex; flex-direction: column; min-height: 100vh; }
+        main { flex-grow: 1; }
+        /* Style for the virtual list container */
+        #card-list {
+            height: 24rem; /* 384px, same as h-96 */
             overflow-y: auto;
-            border: 1px solid var(--glass-border);
-            border-radius: 15px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            position: relative;
-            backdrop-filter: blur(5px);
+            position: relative; /* Needed for absolute positioning of content */
         }
-        
-        .card-item {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 18px;
-            margin-bottom: 15px;
-            border-radius: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 4px solid var(--primary-gold);
-            transition: all 0.3s ease;
-            box-shadow: var(--glass-shadow);
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(5px);
+        /* Style for the theme dropdown menu to make it scrollable */
+        #theme-dropdown {
+            max-height: 24rem; /* h-96 */
+            overflow-y: auto;
         }
-        
-        .card-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .card-number {
-            font-family: 'Courier New', monospace;
-            font-size: 1.3rem;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            color: white;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .card-actions {
-            display: flex;
-            gap: 12px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .copy-btn, .validate-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.1rem;
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(5px);
-        }
-        
-        .copy-btn:hover, .validate-btn:hover {
-            background: rgba(156, 39, 176, 0.5);
-            transform: scale(1.1);
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        .empty-state i {
-            font-size: 60px;
-            margin-bottom: 20px;
-            color: var(--primary-gold);
-            opacity: 0.7;
-        }
-        
-        .empty-state h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: white;
-        }
-        
-        .error {
-            color: #ff6b6b;
-            font-size: 1rem;
-            margin-top: 8px;
-            padding-left: 5px;
-            display: none;
-            font-weight: 500;
-        }
-        
-        .success-message {
-            background: rgba(76, 175, 80, 0.7);
-            color: white;
-            padding: 15px;
-            border-radius: 15px;
-            text-align: center;
-            margin-top: 15px;
-            display: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            animation: fadeIn 0.5s ease;
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(5px);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .card-type {
-            display: inline-block;
-            background: rgba(156, 39, 176, 0.7);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            margin-left: 15px;
-            backdrop-filter: blur(5px);
-        }
-        
-        .info-box {
-            background: rgba(255, 255, 255, 0.15);
-            border-left: 4px solid var(--primary-gold);
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 30px;
-            position: relative;
-            backdrop-filter: blur(5px);
-        }
-        
-        .info-box h3 {
-            margin-bottom: 15px;
-            color: white;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .info-box ul {
-            padding-left: 25px;
-        }
-        
-        .info-box li {
-            margin-bottom: 12px;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        .warning-box {
-            background: rgba(255, 193, 7, 0.15);
-            border-left: 4px solid var(--primary-gold);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            backdrop-filter: blur(5px);
-        }
-        
-        .warning-box h3 {
-            color: var(--primary-gold);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .warning-box p {
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        .progress-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-            margin: 20px 0;
-            overflow: hidden;
-            display: none;
-            border: 1px solid var(--glass-border);
-        }
-        
-        .progress {
-            height: 100%;
-            background: rgba(156, 39, 176, 0.7);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        
-        .status-text {
-            text-align: center;
-            font-weight: 600;
-            color: white;
-            margin-bottom: 15px;
-            display: none;
-        }
-        
-        /* 页脚样式 - 纯金色 */
-        .footer {
-            background-color: var(--primary-gold);
-            color: #000;
-            text-align: left;
-            padding: 25px 30px;
-            font-size: 1rem;
-            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-        }
-        
-        .footer p {
-            margin: 5px 0;
-            line-height: 1.6;
-        }
-        
-        .footer-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: #000;
-        }
-        
-        .footer-section {
-            margin-bottom: 12px;
-        }
-        
-        .footer-label {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #000;
-        }
-        
-        .github-link {
-            color: #7b1fa2;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 700;
-        }
-        
-        .github-link:hover {
-            color: #4a148c;
-            text-decoration: underline;
-        }
-        
-        .contact-info {
-            color: #333;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-        
-        .contact-info:hover {
-            color: #7b1fa2;
-        }
-        
-        .copyright {
-            font-size: 0.95rem;
-            opacity: 0.9;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(0, 0, 0, 0.2);
-        }
-        
-        .version {
-            font-size: 0.85rem;
-            color: #555;
-            margin-top: 8px;
-        }
-        
-        @media (max-width: 900px) {
-            .widget-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .widget-lg {
-                grid-column: 1;
-            }
-        }
-        
-        @media (max-width: 600px) {
-            .top-bar {
-                padding: 15px;
-            }
-            
-            .logo {
-                font-size: 1.4rem;
-            }
-            
-            .full-title {
-                display: none;
-            }
-            
-            .short-title {
-                display: inline;
-            }
-            
-            .action-btn {
-                width: 36px;
-                height: 36px;
-                font-size: 1rem;
-            }
-        }
-        
-        /* 装饰元素 */
-        .grid-decoration {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
-            z-index: -1;
-            pointer-events: none;
+        /* The Core Glassmorphism Style for specific components */
+        .glass-effect {
+            /* Use DaisyUI's HSL CSS variables to create a semi-transparent version of the theme's base color */
+            background-color: hsla(var(--b1) / 0.5) !important;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+             /* A subtle border that also adapts to the theme */
+            border: 1px solid hsla(var(--bc) / 0.2);
         }
     </style>
 </head>
-<body>
-    <!-- 装饰网格 -->
-    <div class="grid-decoration"></div>
-    
-    <!-- 顶部导航栏 -->
-    <div class="top-bar">
-        <div class="logo">
-            <i class="fas fa-credit-card"></i>
-            <span class="full-title">爱莉NFC|自定义卡号工具</span>
-            <span class="short-title">自定义卡号工具</span>
+<body class="bg-base-200">
+
+    <!-- Navbar: Sticky header with glass effect -->
+    <div class="navbar glass-effect shadow-lg sticky top-0 z-50">
+        <div class="navbar-start">
+            <a class="btn btn-ghost text-xl">
+                <i class="fas fa-credit-card"></i>
+                <span class="hidden sm:inline">爱莉NFC | 自定义卡号工具</span>
+                <span class="sm:hidden">卡号工具</span>
+            </a>
         </div>
-        <div class="top-actions">
-            <button class="action-btn" id="theme-toggle" title="切换主题">
-                <i class="fas fa-moon"></i>
-            </button>
-            <button class="action-btn" id="upload-bg" title="上传背景">
+        <div class="navbar-end">
+             <!-- Theme Dropdown Menu -->
+            <div class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-circle" title="切换主题">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <ul tabindex="0" id="theme-dropdown" class="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52 flex-nowrap">
+                    <!-- Theme items will be populated by JavaScript -->
+                </ul>
+            </div>
+            <button class="btn btn-ghost btn-circle" id="upload-bg" title="上传背景">
                 <i class="fas fa-image"></i>
             </button>
         </div>
     </div>
+
+    <!-- Hidden file input for background upload -->
+    <input type="file" id="bg-input" accept="image/*" class="hidden">
+
+    <!-- Main Content Grid -->
+    <main class="p-4 sm:p-6 lg:p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+
+            <!-- Instructions Card with glass effect -->
+            <div class="card glass-effect shadow-xl lg:col-span-3">
+                <div class="card-body">
+                    <div>
+                        <h2 class="card-title mb-2"><i class="fas fa-info-circle"></i> 使用说明</h2>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li><strong>BIN</strong> - 必须是6位数字</li>
+                            <li><strong>自选部分</strong> - 可包含数字和星号(*)</li>
+                            <li><strong>主题</strong> - 可在右上角选择所有DaisyUI主题</li>
+                            <li><strong>性能</strong> - 渲染已通过虚拟化优化，可流畅显示海量数据</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Generation Settings Card with glass effect -->
+            <div class="card glass-effect shadow-xl lg:col-span-3 xl:col-span-1">
+                <div class="card-body">
+                    <h2 class="card-title text-2xl mb-4"><i class="fas fa-sliders-h"></i> 卡号生成设置</h2>
+
+                    <!-- Input Fields for BIN, Middle, Tail -->
+                    <div class="form-control w-full">
+                        <label class="label" for="bin"><span class="label-text font-semibold"><i class="fas fa-building"></i> 银行识别码 (BIN) - 前6位</span></label>
+                        <input type="text" id="bin" placeholder="例如: 621486" maxlength="6" value="621486" class="input input-bordered w-full" />
+                        <label class="label"><span class="label-text-alt text-error hidden" id="bin-error">请输入6位数字的银行识别码</span></label>
+                    </div>
+                    <div class="form-control w-full">
+                        <label class="label" for="middle"><span class="label-text font-semibold"><i class="fas fa-asterisk"></i> 自选部分（数字或*）</span></label>
+                        <input type="text" id="middle" placeholder="例如: 12**34" value="12**34" class="input input-bordered w-full" />
+                        <label class="label"><span class="label-text-alt">使用*作为占位符</span><span class="label-text-alt text-error hidden" id="middle-error">只能包含数字和*</span></label>
+                    </div>
+                    <div class="form-control w-full">
+                        <label class="label" for="tail"><span class="label-text font-semibold"><i class="fas fa-flag"></i> 尾部部分（4-6位数字或*）</span></label>
+                        <input type="text" id="tail" placeholder="例如: **8888" maxlength="6" value="**8888" class="input input-bordered w-full" />
+                        <label class="label"><span class="label-text-alt text-error hidden" id="tail-error">请输入4-6位数字或*</span></label>
+                    </div>
+                    
+                    <!-- Card Length Buttons -->
+                    <div class="form-control w-full">
+                        <label class="label"><span class="label-text font-semibold"><i class="fas fa-ruler"></i> 卡号长度</span></label>
+                        <div id="length-btn-group" class="grid grid-cols-4 gap-2">
+                            <button data-length="12" class="btn btn-sm">12位</button>
+                            <button data-length="13" class="btn btn-sm">13位</button>
+                            <button data-length="14" class="btn btn-sm">14位</button>
+                            <button data-length="15" class="btn btn-sm">15位</button>
+                            <button data-length="16" class="btn btn-sm btn-active">16位</button>
+                            <button data-length="17" class="btn btn-sm">17位</button>
+                            <button data-length="18" class="btn btn-sm">18位</button>
+                            <button data-length="19" class="btn btn-sm">19位</button>
+                        </div>
+                    </div>
+
+
+                    <!-- Action Button -->
+                    <div class="card-actions justify-end mt-4">
+                        <button id="generate-btn" class="btn btn-primary w-full"><i class="fas fa-bolt"></i> 生成所有有效卡号</button>
+                    </div>
+                    
+                    <!-- Progress Bar and Status -->
+                    <div id="progress-container" class="space-y-2 mt-4 hidden">
+                        <div class="status-text text-center font-semibold" id="status-text">正在生成卡号，请稍候...</div>
+                        <progress class="progress progress-primary w-full" id="progress" value="0" max="100"></progress>
+                    </div>
+
+                    <!-- Toast for Copy Confirmation -->
+                    <div class="toast toast-top toast-center" id="success-toast" style="display: none;">
+                      <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i><span>卡号已成功复制到剪贴板！</span>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generated Numbers Output (Hidden by default) with glass effect -->
+            <div id="output-card" class="card glass-effect shadow-xl lg:col-span-3 xl:col-span-2 hidden">
+                <div class="card-body">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4">
+                        <h2 class="card-title text-2xl"><i class="fas fa-list"></i> 生成的卡号</h2>
+                        <div class="flex items-center gap-2">
+                           <div class="badge badge-info gap-2" id="card-type">未知类型</div>
+                           <div class="badge badge-secondary" id="result-count">0 个</div>
+                        </div>
+                    </div>
+                    <!-- Virtualization Container -->
+                    <div id="card-list" class="bg-base-300/30 rounded-lg p-2">
+                        <!-- Sizer and Content will be injected here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
     
-    <!-- 文件输入 -->
-    <input type="file" id="bg-input" accept="image/*" style="display: none;">
-    
-    <!-- 小组件网格 -->
-    <div class="widget-grid">
-        <!-- 输入小组件 -->
-        <div class="widget widget-lg">
-            <div class="widget-header">
-                <div class="widget-icon">
-                    <i class="fas fa-sliders-h"></i>
-                </div>
-                <h2>卡号生成设置</h2>
-            </div>
-            
-            <div class="form-group">
-                <label for="bin"><i class="fas fa-building"></i> 银行识别码 (BIN) - 前6位</label>
-                <div class="input-wrapper">
-                    <input type="text" id="bin" placeholder="例如: 621486" maxlength="6" value="621486">
-                </div>
-                <div class="error" id="bin-error">请输入6位数字的银行识别码</div>
-            </div>
-            
-            <div class="form-group">
-                <label for="middle"><i class="fas fa-asterisk"></i> 自选部分（数字或*）</label>
-                <div class="input-wrapper">
-                    <input type="text" id="middle" placeholder="例如: 12**34" value="12**34">
-                </div>
-                <div class="input-hint">使用*作为占位符，将自动生成所有可能的数字组合</div>
-                <div class="error" id="middle-error">只能包含数字和*</div>
-            </div>
-            
-            <div class="form-group">
-                <label for="tail"><i class="fas fa-flag"></i> 尾部部分（4-6位数字或*）</label>
-                <div class="input-wrapper">
-                    <input type="text" id="tail" placeholder="例如: **8888" maxlength="6" value="**8888">
-                </div>
-                <div class="error" id="tail-error">请输入4-6位数字或*</div>
-            </div>
-            
-            <div class="form-group">
-                <label for="length"><i class="fas fa-ruler"></i> 卡号长度</label>
-                <select id="length">
-                    <option value="12">12位卡号</option>
-                    <option value="13">13位卡号</option>
-                    <option value="14">14位卡号</option>
-                    <option value="15">15位卡号</option>
-                    <option value="16" selected>16位卡号</option>
-                    <option value="17">17位卡号</option>
-                    <option value="18">18位卡号</option>
-                    <option value="19">19位卡号</option>
-                </select>
-            </div>
-            
-            <button id="generate-btn" class="btn">
-                <i class="fas fa-bolt"></i> 生成所有有效卡号
-            </button>
-            
-            <div class="progress-bar" id="progress-bar">
-                <div class="progress" id="progress"></div>
-            </div>
-            
-            <div class="status-text" id="status-text">正在生成卡号，请稍候...</div>
-            
-            <div class="success-message" id="success-msg">
-                <i class="fas fa-check-circle"></i> 卡号已成功复制到剪贴板！
-            </div>
-        </div>
-        
-        <!-- 输出小组件 -->
-        <div class="widget widget-lg">
-            <div class="widget-header">
-                <div class="widget-icon">
-                    <i class="fas fa-list"></i>
-                </div>
-                <h2>生成的卡号 <span class="card-type" id="card-type">VISA/MasterCard</span></h2>
-                <div class="result-count" id="result-count">0 个</div>
-            </div>
-            
-            <div class="card-list" id="card-list">
-                <div class="empty-state">
-                    <i class="fas fa-credit-card"></i>
-                    <h3>等待生成银行卡号</h3>
-                    <p>请填写左侧表单并点击"生成所有有效卡号"按钮</p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 信息小组件 -->
-        <div class="widget">
-            <div class="widget-header">
-                <div class="widget-icon">
-                    <i class="fas fa-info-circle"></i>
-                </div>
-                <h2>使用说明</h2>
-            </div>
-            
-            <div class="info-box">
-                <ul>
-                    <li><strong>BIN</strong> - 必须是6位数字（例如：621486）</li>
-                    <li><strong>自选部分</strong> - 可以包含数字和星号(*)</li>
-                    <li><strong>尾部部分</strong> - 4-6位数字或星号</li>
-                    <li><strong>卡号长度</strong> - 在12-19位之间</li>
-                    <li>生成所有可能的卡号组合并验证Luhn算法</li>
-                </ul>
-            </div>
-        </div>
-        
-        <!-- 警告小组件 -->
-        <div class="widget">
-            <div class="widget-header">
-                <div class="widget-icon">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <h2>注意事项</h2>
-            </div>
-            
-            <div class="warning-box">
-                <p>生成所有可能的卡号可能需要较长时间，特别是当有多个星号(*)时。请耐心等待，不要关闭页面。</p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 页脚 -->
-    <div class="footer">
-        <div class="footer-title">爱莉希雅近场通信</div>
-        
-        <div class="footer-section">
-            <div class="footer-label">项目GitHub地址</div>
-            <a href="https://github.com/Claylark/CNG-Web" target="_blank" class="github-link">
-                https://github.com/Claylark/CNG-Web
-            </a>
-        </div>
-        
-        <div class="footer-section">
-            <div class="footer-label">站长邮箱</div>
-            <a href="mailto:0@elynfc.com" class="contact-info">0@elynfc.com</a>
-        </div>
-        
-        <div class="copyright">
-            © Copyright 爱莉希雅近场通信 本项目使用GPL v3.0协议开源
-        </div>
-        
-        <div class="version">1.1.0</div>
-    </div>
+    <!-- Footer Section (No glass effect) -->
+    <footer class="footer p-10 bg-neutral text-neutral-content mt-8">
+        <aside><i class="fas fa-credit-card text-3xl"></i><p class="font-bold text-lg">爱莉希雅近场通信<br><span class="font-normal">提供NFC相关工具</span></p><p class="text-sm">© Copyright 爱莉希雅近场通信. 本项目使用GPL v3.0协议开源.</p><p class="text-xs mt-2">版本: 2.0.0</p></aside> 
+        <nav><h6 class="footer-title">联系和源码</h6> <a href="https://github.com/Claylark/CNG-Web" target="_blank" class="link link-hover"><i class="fab fa-github"></i> 项目GitHub地址</a> <a href="mailto:0@elynfc.com" class="link link-hover"><i class="fas fa-envelope"></i> 站长邮箱</a></nav>
+    </footer>
 
     <script>
-        // Luhn校验算法
-        function luhnCheck(cardNumber) {
-            let total = 0;
-            const reverseDigits = cardNumber.split('').reverse();
-            
-            for (let i = 0; i < reverseDigits.length; i++) {
-                let digit = parseInt(reverseDigits[i]);
-                
-                if (i % 2 === 1) {
-                    digit *= 2;
-                    if (digit > 9) {
-                        digit -= 9;
-                    }
-                }
-                
-                total += digit;
-            }
-            
-            return total % 10 === 0;
+        // --- UI Interaction Logic (Remains on Main Thread) ---
+        function validateInput() {
+            const binError = document.getElementById('bin-error'), middleError = document.getElementById('middle-error'), tailError = document.getElementById('tail-error');
+            let isValid = true;
+            binError.classList.add('hidden'); middleError.classList.add('hidden'); tailError.classList.add('hidden');
+            if (document.getElementById('bin').value.length !== 6 || !/^\d+$/.test(document.getElementById('bin').value)) { binError.classList.remove('hidden'); isValid = false; }
+            if (document.getElementById('middle').value && !/^[\d*]+$/.test(document.getElementById('middle').value)) { middleError.classList.remove('hidden'); isValid = false; }
+            if (!/^[\d*]{4,6}$/.test(document.getElementById('tail').value)) { tailError.classList.remove('hidden'); isValid = false; }
+            return isValid;
         }
-
-        // 生成所有可能的数字替代*号
-        function generateAllPossibleNumbers(input) {
-            if (!input.includes('*')) {
-                return [input];
-            }
-            
+        function detectCardType(bin) {
+            if (bin.startsWith('4')) return 'VISA'; if (bin.startsWith('5')) return 'MasterCard'; if (bin.startsWith('34') || bin.startsWith('37')) return 'American Express';
+            if (bin.startsWith('62')) return 'UnionPay'; if (bin.startsWith('35')) return 'JCB'; return '未知类型';
+        }
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('success-toast');
+                toast.style.display = 'grid'; setTimeout(() => { toast.style.display = 'none'; }, 3000);
+            });
+        }
+        function generateAllPossibleNumbers(input) { // This function remains on main thread for pre-calculation
+            if (!input.includes('*')) return [input];
             const starCount = (input.match(/\*/g) || []).length;
-            const replacements = [];
-            const totalCombinations = Math.pow(10, starCount);
-            
+            if (starCount > 9) { alert('星号过多(最多9个)，任务可能非常耗时。'); }
+            const replacements = []; const totalCombinations = Math.pow(10, starCount);
             for (let i = 0; i < totalCombinations; i++) {
-                let numStr = i.toString().padStart(starCount, '0');
-                let newStr = input;
-                for (let j = 0; j < starCount; j++) {
-                    newStr = newStr.replace('*', numStr[j]);
-                }
+                let numStr = i.toString().padStart(starCount, '0'), newStr = input;
+                for (let j = 0; j < starCount; j++) { newStr = newStr.replace('*', numStr[j]); }
                 replacements.push(newStr);
             }
-            
             return replacements;
         }
 
-        // 生成所有可能的卡号
-        function generateAllCardNumbers() {
-            const bin = document.getElementById('bin').value;
-            const middle = document.getElementById('middle').value;
-            const tail = document.getElementById('tail').value;
-            const length = parseInt(document.getElementById('length').value);
-            
-            // 验证输入
-            if (!validateInput(bin, middle, tail)) {
-                return [];
-            }
-            
-            // 显示进度条
-            document.getElementById('progress-bar').style.display = 'block';
-            document.getElementById('status-text').style.display = 'block';
-            document.getElementById('progress').style.width = '0%';
-            
-            // 生成所有可能的中间部分和尾部部分
-            const possibleMiddle = generateAllPossibleNumbers(middle);
-            const possibleTail = generateAllPossibleNumbers(tail);
-            
-            const cardNumbers = [];
-            
-            // 计算总迭代次数
-            const totalIterations = possibleMiddle.length * possibleTail.length;
-            let currentIteration = 0;
-            
-            // 遍历所有组合
-            for (const m of possibleMiddle) {
-                for (const t of possibleTail) {
-                    // 计算需要的填充长度
-                    const currentLength = bin.length + m.length + t.length;
-                    const paddingLength = length - currentLength;
-                    
-                    if (paddingLength < 0) {
-                        // 长度超过，跳过
-                        continue;
-                    }
-                    
-                    if (paddingLength === 0) {
-                        // 无需填充
-                        const cardNumber = bin + m + t;
-                        if (luhnCheck(cardNumber)) {
-                            cardNumbers.push(cardNumber);
-                        }
-                    } else {
-                        // 生成所有可能的填充组合
-                        const paddingCombinations = Math.pow(10, paddingLength);
-                        for (let i = 0; i < paddingCombinations; i++) {
-                            const padding = i.toString().padStart(paddingLength, '0');
-                            const cardNumber = bin + m + padding + t;
-                            
-                            if (cardNumber.length === length && luhnCheck(cardNumber)) {
-                                cardNumbers.push(cardNumber);
-                            }
-                        }
-                    }
-                    
-                    // 更新进度
-                    currentIteration++;
-                    const progress = (currentIteration / totalIterations) * 100;
-                    document.getElementById('progress').style.width = `${progress}%`;
+        // --- Virtualization Logic ---
+        const virtualList = {
+            data: [], itemHeight: 52, container: document.getElementById('card-list'), sizer: null, content: null,
+            init(data) {
+                this.data = data; this.container.innerHTML = '';
+                if (data.length === 0) {
+                    this.container.innerHTML = `<div class="empty-state text-center flex flex-col justify-center items-center h-full text-base-content/70"><i class="fas fa-exclamation-circle text-5xl mb-4"></i><h3 class="text-xl font-bold mb-2">未生成有效卡号</h3><p>请尝试不同的输入参数</p></div>`; return;
                 }
+                this.sizer = document.createElement('div'); this.sizer.style.position = 'relative'; this.sizer.style.height = `${this.data.length * this.itemHeight}px`;
+                this.content = document.createElement('div'); this.content.style.position = 'absolute'; this.content.style.top = '0'; this.content.style.left = '0'; this.content.style.width = '100%';
+                this.sizer.appendChild(this.content); this.container.appendChild(this.sizer);
+                this.container.onscroll = () => this.render(); this.render();
+            },
+            render() {
+                if (!this.data || this.data.length === 0) return;
+                const scrollTop = this.container.scrollTop; const startIndex = Math.floor(scrollTop / this.itemHeight);
+                const visibleItemCount = Math.ceil(this.container.clientHeight / this.itemHeight); const endIndex = Math.min(startIndex + visibleItemCount + 5, this.data.length);
+                const visibleItems = this.data.slice(startIndex, endIndex);
+                this.content.style.transform = `translateY(${startIndex * this.itemHeight}px)`;
+                this.content.innerHTML = visibleItems.map(card => {
+                    const formattedCard = card.replace(/(\d{4})/g, '$1 ').trim();
+                    return `<div class="flex justify-between items-center bg-base-100/50 p-3 rounded-lg shadow mx-2 mb-2" style="height: ${this.itemHeight - 8}px;"><div class="font-mono text-lg">${formattedCard}</div><div class="flex gap-2"><button class="btn btn-xs btn-ghost btn-circle" title="复制卡号" onclick="copyToClipboard('${card}')"><i class="fas fa-copy"></i></button></div></div>`;
+                }).join('');
             }
-            
-            // 隐藏进度条
-            document.getElementById('progress-bar').style.display = 'none';
-            document.getElementById('status-text').style.display = 'none';
-            
-            return cardNumbers;
-        }
+        };
 
-        // 验证输入
-        function validateInput(bin, middle, tail) {
-            const binError = document.getElementById('bin-error');
-            const middleError = document.getElementById('middle-error');
-            const tailError = document.getElementById('tail-error');
-            let isValid = true;
-            
-            binError.style.display = 'none';
-            middleError.style.display = 'none';
-            tailError.style.display = 'none';
-            
-            // 验证BIN
-            if (bin.length !== 6 || !/^\d+$/.test(bin)) {
-                binError.style.display = 'block';
-                isValid = false;
-            }
-            
-            // 验证中间部分
-            if (middle && !/^[\d*]+$/.test(middle)) {
-                middleError.style.display = 'block';
-                isValid = false;
-            }
-            
-            // 验证尾部部分
-            if (!/^[\d*]{4,6}$/.test(tail)) {
-                tailError.style.display = 'block';
-                isValid = false;
-            }
-            
-            return isValid;
-        }
-
-        // 检测卡类型
-        function detectCardType(bin) {
-            if (bin.startsWith('4')) {
-                return 'VISA';
-            } else if (bin.startsWith('5')) {
-                return 'MasterCard';
-            } else if (bin.startsWith('34') || bin.startsWith('37')) {
-                return 'American Express';
-            } else if (bin.startsWith('62')) {
-                return 'UnionPay';
-            } else if (bin.startsWith('35')) {
-                return 'JCB';
-            }
-            return '未知类型';
-        }
-
-        // 复制卡号到剪贴板
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                const successMsg = document.getElementById('success-msg');
-                successMsg.style.display = 'block';
-                setTimeout(() => {
-                    successMsg.style.display = 'none';
-                }, 3000);
-            });
-        }
-
-        // 验证卡号
-        function validateCard(cardNumber) {
-            const isValid = luhnCheck(cardNumber);
-            const message = isValid ? 
-                `卡号: ${cardNumber}\nLuhn校验: 通过 ✓\n有效卡号` : 
-                `卡号: ${cardNumber}\nLuhn校验: 未通过 ✗\n无效卡号`;
-            
-            alert(message);
-        }
-
-        // 显示生成的卡号
-        function displayCardNumbers(cardNumbers) {
-            const cardList = document.getElementById('card-list');
-            const resultCount = document.getElementById('result-count');
-            
-            if (cardNumbers.length === 0) {
-                cardList.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <h3>未生成有效卡号</h3>
-                        <p>请尝试不同的输入参数或检查组合是否有效</p>
-                    </div>
-                `;
-                resultCount.textContent = '0 个';
-                return;
-            }
-            
-            // 更新卡片类型显示
-            const bin = document.getElementById('bin').value;
-            const cardType = detectCardType(bin);
-            document.getElementById('card-type').textContent = cardType;
-            
-            // 更新结果计数
-            resultCount.textContent = `${cardNumbers.length} 个`;
-            
-            // 生成卡号列表
-            let cardsHTML = '';
-            cardNumbers.forEach(card => {
-                // 格式化卡号显示
-                const formattedCard = card.replace(/(\d{4})/g, '$1 ').trim();
-                
-                cardsHTML += `
-                    <div class="card-item">
-                        <div class="card-number">${formattedCard}</div>
-                        <div class="card-actions">
-                            <button class="validate-btn" title="验证卡号" onclick="validateCard('${card}')">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <button class="copy-btn" title="复制卡号" onclick="copyToClipboard('${card}')">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            cardList.innerHTML = cardsHTML;
-        }
-
-        // 切换深色模式
-        function toggleDarkMode() {
-            const body = document.body;
-            const themeToggle = document.getElementById('theme-toggle');
-            
-            if (body.classList.contains('dark-mode')) {
-                body.classList.remove('dark-mode');
-                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                localStorage.setItem('theme', 'light');
-            } else {
-                body.classList.add('dark-mode');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-
-        // 背景图片上传
-        function setupBackgroundUpload() {
-            const bgInput = document.getElementById('bg-input');
-            const uploadBtn = document.getElementById('upload-bg');
-            
-            uploadBtn.addEventListener('click', () => {
-                bgInput.click();
-            });
-            
-            bgInput.addEventListener('change', function(e) {
-                if (this.files && this.files[0]) {
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        document.body.style.backgroundImage = `url(${e.target.result})`;
-                        localStorage.setItem('customBackground', e.target.result);
-                    }
-                    
-                    reader.readAsDataURL(this.files[0]);
-                }
-            });
-            
-            // 检查是否有保存的背景
-            const savedBg = localStorage.getItem('customBackground');
-            if (savedBg) {
-                document.body.style.backgroundImage = `url(${savedBg})`;
-            }
-        }
-
-        // 初始化页面
+        // --- Web Worker & App Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            // 检查本地存储中的主题设置
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                document.getElementById('theme-toggle').innerHTML = '<i class="fas fa-sun"></i>';
-            }
+            let activeWorkers = [];
+            const workerScript = `self.luhnCheck=function(c){let t=0;const d=c.split('').reverse();for(let i=0;i<d.length;i++){let n=parseInt(d[i]);if(i%2===1){n*=2;if(n>9)n-=9;}t+=n;}return t%10===0;};self.onmessage=function(e){const{bin:b,middleChunk:m,tailCombinations:a,length:l}=e.data;const n=[];for(const c of m){for(const s of a){const o=b.length+c.length+s.length,r=l-o;if(r>=0){if(r>5)continue;const t=Math.pow(10,r);for(let e=0;e<t;e++){const t=e.toString().padStart(r,'0'),u=b+c+t+s;u.length===l&&self.luhnCheck(u)&&n.push(u);}}}}postMessage(n);};`;
+            const blob = new Blob([workerScript], { type: 'application/javascript' });
+            const workerUrl = URL.createObjectURL(blob);
+
+            // --- Theme Setup Logic ---
+            const htmlEl = document.documentElement;
+            const themeDropdown = document.getElementById('theme-dropdown');
+            const daisyuiThemes = ["light","dark","cupcake","bumblebee","emerald","corporate","synthwave","retro","cyberpunk","valentine","halloween","garden","forest","aqua","lofi","pastel","fantasy","wireframe","black","luxury","dracula","cmyk","autumn","business","acid","lemonade","night","coffee","winter","dim","nord","sunset"];
             
-            // 设置主题切换事件
-            document.getElementById('theme-toggle').addEventListener('click', toggleDarkMode);
-            
-            // 设置生成按钮事件
+            themeDropdown.innerHTML = daisyuiThemes.map(theme => `<li><a data-theme-name="${theme}">${theme.charAt(0).toUpperCase() + theme.slice(1)}</a></li>`).join('');
+            const savedTheme = localStorage.getItem('theme') || 'cupcake';
+            htmlEl.setAttribute('data-theme', savedTheme);
+            themeDropdown.addEventListener('click', (e) => {
+                const target = e.target.closest('a');
+                if (target) {
+                    const themeName = target.getAttribute('data-theme-name');
+                    htmlEl.setAttribute('data-theme', themeName);
+                    localStorage.setItem('theme', themeName);
+                }
+            });
+
+            // --- Length Button Group Logic ---
+            const lengthBtnGroup = document.getElementById('length-btn-group');
+            lengthBtnGroup.addEventListener('click', (e) => {
+                const target = e.target.closest('button');
+                if (target) {
+                    const currentlyActive = lengthBtnGroup.querySelector('.btn-active');
+                    if (currentlyActive) {
+                        currentlyActive.classList.remove('btn-active');
+                    }
+                    target.classList.add('btn-active');
+                }
+            });
+
+            // --- Main Generate Button Logic ---
             document.getElementById('generate-btn').addEventListener('click', () => {
-                // 清空之前的生成结果
-                document.getElementById('card-list').innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <h3>正在生成卡号</h3>
-                        <p>请稍候，这可能需要一些时间...</p>
-                    </div>
-                `;
+                if (!validateInput()) return;
+                activeWorkers.forEach(w => w.terminate()); activeWorkers = [];
+                const ui = { 
+                    progressContainer: document.getElementById('progress-container'), 
+                    progressBar: document.getElementById('progress'), 
+                    resultCount: document.getElementById('result-count'), 
+                    cardType: document.getElementById('card-type'), 
+                    generateBtn: document.getElementById('generate-btn'),
+                    outputCard: document.getElementById('output-card')
+                };
                 
-                // 使用setTimeout确保UI更新
+                ui.outputCard.classList.remove('hidden'); virtualList.init([]); ui.resultCount.textContent = '0 个'; 
+                document.getElementById('card-list').innerHTML = `<div class="empty-state text-center flex flex-col justify-center items-center h-full text-base-content/70"><span class="loading loading-spinner loading-lg"></span><h3 class="text-xl font-bold mt-4">正在初始化...</h3></div>`;
+                ui.progressContainer.classList.remove('hidden'); ui.progressBar.value = 0; ui.generateBtn.classList.add('btn-disabled');
+
                 setTimeout(() => {
-                    const cardNumbers = generateAllCardNumbers();
-                    displayCardNumbers(cardNumbers);
-                }, 100);
+                    const bin = document.getElementById('bin').value, middle = document.getElementById('middle').value, tail = document.getElementById('tail').value;
+                    const length = parseInt(document.querySelector('#length-btn-group .btn-active').getAttribute('data-length'));
+                    
+                    const middleCombinations = generateAllPossibleNumbers(middle), tailCombinations = generateAllPossibleNumbers(tail);
+                    if (middleCombinations.length === 0 || tailCombinations.length === 0) { 
+                        virtualList.init([]); ui.progressContainer.classList.add('hidden'); ui.generateBtn.classList.remove('btn-disabled'); return; 
+                    }
+                    const numWorkers = navigator.hardwareConcurrency || 4; const chunkSize = Math.ceil(middleCombinations.length / numWorkers); let allResults = []; let finishedWorkers = 0;
+                    ui.cardType.textContent = detectCardType(bin);
+
+                    for (let i = 0; i < numWorkers; i++) {
+                        const worker = new Worker(workerUrl); activeWorkers.push(worker);
+                        const chunk = middleCombinations.slice(i * chunkSize, (i + 1) * chunkSize);
+                        if (chunk.length === 0) {
+                            finishedWorkers++; 
+                            if (finishedWorkers === numWorkers) { 
+                                allResults.sort(); ui.resultCount.textContent = `${allResults.length} 个`; virtualList.init(allResults); 
+                                ui.progressContainer.classList.add('hidden'); ui.generateBtn.classList.remove('btn-disabled'); 
+                            } 
+                            continue;
+                        }
+                        worker.postMessage({ bin, middleChunk: chunk, tailCombinations, length });
+                        worker.onmessage = (e) => {
+                            allResults.push(...e.data); finishedWorkers++; ui.progressBar.value = (finishedWorkers / numWorkers) * 100;
+                            if (finishedWorkers === numWorkers) { 
+                                allResults.sort(); ui.resultCount.textContent = `${allResults.length} 个`; virtualList.init(allResults); 
+                                ui.progressContainer.classList.add('hidden'); ui.generateBtn.classList.remove('btn-disabled'); activeWorkers.forEach(w => w.terminate()); 
+                            }
+                            worker.terminate();
+                        };
+                        worker.onerror = (e) => { console.error(`Worker error:`, e); finishedWorkers++; if (finishedWorkers === numWorkers) { ui.progressContainer.classList.add('hidden'); ui.generateBtn.classList.remove('btn-disabled'); } };
+                    }
+                }, 50);
             });
             
-            // 添加输入验证
-            document.getElementById('bin').addEventListener('input', function() {
-                this.value = this.value.replace(/\D/g, '').slice(0, 6);
-            });
-            
-            document.getElementById('middle').addEventListener('input', function() {
-                this.value = this.value.replace(/[^\d*]/g, '');
-            });
-            
-            document.getElementById('tail').addEventListener('input', function() {
-                this.value = this.value.replace(/[^\d*]/g, '').slice(0, 6);
-            });
-            
-            // 设置默认值
-            document.getElementById('bin').value = '621486';
-            document.getElementById('middle').value = '12**34';
-            document.getElementById('tail').value = '**8888';
-            
-            // 设置背景上传功能
-            setupBackgroundUpload();
+            // --- Other Setups ---
+            document.getElementById('bin').addEventListener('input', function() { this.value = this.value.replace(/\D/g, '').slice(0, 6); });
+            document.getElementById('middle').addEventListener('input', function() { this.value = this.value.replace(/[^\d*]/g, ''); });
+            document.getElementById('tail').addEventListener('input', function() { this.value = this.value.replace(/[^\d*]/g, '').slice(0, 6); });
+            const bgInput = document.getElementById('bg-input'), uploadBtn = document.getElementById('upload-bg');
+            uploadBtn.addEventListener('click', () => bgInput.click());
+            bgInput.addEventListener('change', function(e) { if (this.files && this.files[0]) { const reader = new FileReader(); reader.onload = function(e) { const url = `url(${e.target.result})`; document.body.style.backgroundImage = url; localStorage.setItem('customBackground', e.target.result); }; reader.readAsDataURL(this.files[0]); } });
+            const savedBg = localStorage.getItem('customBackground');
+            if (savedBg) { document.body.style.backgroundImage = `url(${savedBg})`; document.body.style.backgroundSize = 'cover'; document.body.style.backgroundAttachment = 'fixed';}
         });
     </script>
 </body>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>银行卡号生成器 - Luhn算法校验</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 30px;
+        }
+        
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+        }
+        
+        .output-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+            border-left: 1px solid #eee;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            border-color: #1a2a6c;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 42, 108, 0.2);
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn i {
+            margin-right: 10px;
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .result-header h2 {
+            color: #333;
+        }
+        
+        .result-count {
+            background-color: #1a2a6c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .card-list {
+            max-height: 350px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        .card-item {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #1a2a6c;
+            transition: all 0.3s ease;
+        }
+        
+        .card-item:hover {
+            transform: translateX(5px);
+            background-color: #edf2ff;
+        }
+        
+        .card-number {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .copy-btn, .validate-btn {
+            background: #1a2a6c;
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover, .validate-btn:hover {
+            background: #b21f1f;
+            transform: scale(1.1);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+        
+        .error {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .success-message {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .card-type {
+            display: inline-block;
+            background: #1a2a6c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .output-section {
+                border-left: none;
+                border-top: 1px solid #eee;
+                margin-top: 20px;
+                padding-top: 30px;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-credit-card"></i> 银行卡号生成器</h1>
+            <p>使用Luhn校验算法生成有效的银行卡号。输入银行识别码(BIN)和自选尾号，选择卡号长度，即可生成符合校验规则的银行卡号。</p>
+        </header>
+        
+        <div class="content">
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="bin">银行识别码 (BIN) - 前6位</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="bin" placeholder="例如: 622576" maxlength="6">
+                    </div>
+                    <div class="error" id="bin-error">请输入6位数字的银行识别码</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="suffix">自选尾号 - 最后6位</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="suffix" placeholder="例如: 888888" maxlength="6">
+                    </div>
+                    <div class="error" id="suffix-error">请输入6位数字的自选尾号</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="length">卡号长度</label>
+                    <select id="length">
+                        <option value="15">15位卡号</option>
+                        <option value="16" selected>16位卡号</option>
+                        <option value="19">19位卡号</option>
+                    </select>
+                </div>
+                
+                <button id="generate-btn" class="btn">
+                    <i class="fas fa-cogs"></i> 生成银行卡号
+                </button>
+                
+                <div class="success-message" id="success-msg">
+                    卡号已成功复制到剪贴板！
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <div class="result-header">
+                    <h2>生成的卡号 <span class="card-type" id="card-type">VISA/MasterCard</span></h2>
+                    <div class="result-count" id="result-count">0 个</div>
+                </div>
+                
+                <div class="card-list" id="card-list">
+                    <div class="empty-state">
+                        <i class="fas fa-credit-card"></i>
+                        <h3>暂无生成的卡号</h3>
+                        <p>请填写左侧表单并点击生成按钮</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Luhn校验算法
+        function luhnCheck(cardNumber) {
+            let total = 0;
+            const reverseDigits = cardNumber.split('').reverse();
+            
+            for (let i = 0; i < reverseDigits.length; i++) {
+                let digit = parseInt(reverseDigits[i]);
+                
+                if (i % 2 === 1) {
+                    digit *= 2;
+                    if (digit > 9) {
+                        digit -= 9;
+                    }
+                }
+                
+                total += digit;
+            }
+            
+            return total % 10 === 0;
+        }
+
+        // 生成卡号
+        function generateCardNumbers() {
+            const bin = document.getElementById('bin').value;
+            const suffix = document.getElementById('suffix').value;
+            const length = parseInt(document.getElementById('length').value);
+            
+            // 验证输入
+            if (!validateInput(bin, suffix)) {
+                return [];
+            }
+            
+            const middleLength = length - bin.length - suffix.length;
+            
+            if (middleLength < 0) {
+                alert("公司码和自选卡号的总长度大于卡号长度，请检查输入。");
+                return [];
+            }
+            
+            const maxAttempts = 10000;
+            const maxValid = 100;
+            const cardNumbers = [];
+            
+            for (let i = 0; i < maxAttempts && cardNumbers.length < maxValid; i++) {
+                // 生成中间部分
+                let middle = '';
+                for (let j = 0; j < middleLength; j++) {
+                    middle += Math.floor(Math.random() * 10).toString();
+                }
+                
+                const cardNumber = bin + middle + suffix;
+                
+                if (luhnCheck(cardNumber)) {
+                    cardNumbers.push(cardNumber);
+                }
+            }
+            
+            return cardNumbers;
+        }
+
+        // 验证输入
+        function validateInput(bin, suffix) {
+            const binError = document.getElementById('bin-error');
+            const suffixError = document.getElementById('suffix-error');
+            let isValid = true;
+            
+            binError.style.display = 'none';
+            suffixError.style.display = 'none';
+            
+            if (bin.length !== 6 || !/^\d+$/.test(bin)) {
+                binError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (suffix.length !== 6 || !/^\d+$/.test(suffix)) {
+                suffixError.style.display = 'block';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+
+        // 检测卡类型
+        function detectCardType(bin) {
+            if (bin.startsWith('4')) {
+                return 'VISA';
+            } else if (bin.startsWith('5')) {
+                return 'MasterCard';
+            } else if (bin.startsWith('34') || bin.startsWith('37')) {
+                return 'American Express';
+            } else if (bin.startsWith('62')) {
+                return 'UnionPay';
+            }
+            return 'Unknown';
+        }
+
+        // 复制卡号到剪贴板
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const successMsg = document.getElementById('success-msg');
+                successMsg.style.display = 'block';
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 2000);
+            });
+        }
+
+        // 显示生成的卡号
+        function displayCardNumbers(cardNumbers) {
+            const cardList = document.getElementById('card-list');
+            const resultCount = document.getElementById('result-count');
+            
+            if (cardNumbers.length === 0) {
+                cardList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3>未生成有效卡号</h3>
+                        <p>请尝试不同的输入参数</p>
+                    </div>
+                `;
+                resultCount.textContent = '0 个';
+                return;
+            }
+            
+            // 更新卡片类型显示
+            const bin = document.getElementById('bin').value;
+            const cardType = detectCardType(bin);
+            document.getElementById('card-type').textContent = cardType;
+            
+            // 更新结果计数
+            resultCount.textContent = `${cardNumbers.length} 个`;
+            
+            // 生成卡号列表
+            let cardsHTML = '';
+            cardNumbers.forEach(card => {
+                // 格式化卡号显示
+                const formattedCard = card.replace(/(\d{4})/g, '$1 ').trim();
+                
+                cardsHTML += `
+                    <div class="card-item">
+                        <div class="card-number">${formattedCard}</div>
+                        <div class="card-actions">
+                            <button class="validate-btn" title="验证卡号" onclick="validateCard('${card}')">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="copy-btn" title="复制卡号" onclick="copyToClipboard('${card}')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cardList.innerHTML = cardsHTML;
+        }
+
+        // 验证卡号
+        function validateCard(cardNumber) {
+            const isValid = luhnCheck(cardNumber);
+            alert(`卡号: ${cardNumber}\nLuhn校验: ${isValid ? '通过 ✓' : '未通过 ✗'}`);
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('generate-btn').addEventListener('click', () => {
+                const cardNumbers = generateCardNumbers();
+                displayCardNumbers(cardNumbers);
+            });
+            
+            // 添加输入验证
+            document.getElementById('bin').addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '').slice(0, 6);
+            });
+            
+            document.getElementById('suffix').addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '').slice(0, 6);
+            });
+        });
+    </script>
+</body>
+</html>

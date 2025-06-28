@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ElyNFC-CNG | DaisyUI Edition (Final)</title>
+    <title>ElyNFC-CNG | DaisyUI Edition (Partial Glass)</title>
     <!-- Tailwind CSS & DaisyUI CDN -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,12 +23,21 @@
             max-height: 24rem; /* h-96 */
             overflow-y: auto;
         }
+        /* The Core Glassmorphism Style for specific components */
+        .glass-effect {
+            /* Use DaisyUI's HSL CSS variables to create a semi-transparent version of the theme's base color */
+            background-color: hsla(var(--b1) / 0.5) !important;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+             /* A subtle border that also adapts to the theme */
+            border: 1px solid hsla(var(--bc) / 0.2);
+        }
     </style>
 </head>
 <body class="bg-base-200">
 
-    <!-- Navbar: Sticky header for the application -->
-    <div class="navbar bg-base-100 shadow-lg sticky top-0 z-50">
+    <!-- Navbar: Sticky header with glass effect -->
+    <div class="navbar glass-effect shadow-lg sticky top-0 z-50">
         <div class="navbar-start">
             <a class="btn btn-ghost text-xl">
                 <i class="fas fa-credit-card"></i>
@@ -59,8 +68,8 @@
     <main class="p-4 sm:p-6 lg:p-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
 
-            <!-- Instructions Card -->
-            <div class="card bg-base-100 shadow-xl lg:col-span-3">
+            <!-- Instructions Card with glass effect -->
+            <div class="card glass-effect shadow-xl lg:col-span-3">
                 <div class="card-body">
                     <div>
                         <h2 class="card-title mb-2"><i class="fas fa-info-circle"></i> 使用说明</h2>
@@ -75,8 +84,8 @@
             </div>
 
 
-            <!-- Generation Settings Card -->
-            <div class="card bg-base-100 shadow-xl lg:col-span-3 xl:col-span-1">
+            <!-- Generation Settings Card with glass effect -->
+            <div class="card glass-effect shadow-xl lg:col-span-3 xl:col-span-1">
                 <div class="card-body">
                     <h2 class="card-title text-2xl mb-4"><i class="fas fa-sliders-h"></i> 卡号生成设置</h2>
 
@@ -133,8 +142,8 @@
                 </div>
             </div>
 
-            <!-- Generated Numbers Output (Hidden by default) -->
-            <div id="output-card" class="card bg-base-100 shadow-xl lg:col-span-3 xl:col-span-2 hidden">
+            <!-- Generated Numbers Output (Hidden by default) with glass effect -->
+            <div id="output-card" class="card glass-effect shadow-xl lg:col-span-3 xl:col-span-2 hidden">
                 <div class="card-body">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4">
                         <h2 class="card-title text-2xl"><i class="fas fa-list"></i> 生成的卡号</h2>
@@ -144,7 +153,7 @@
                         </div>
                     </div>
                     <!-- Virtualization Container -->
-                    <div id="card-list" class="bg-base-200 rounded-lg p-2">
+                    <div id="card-list" class="bg-base-300/30 rounded-lg p-2">
                         <!-- Sizer and Content will be injected here by JavaScript -->
                     </div>
                 </div>
@@ -152,9 +161,9 @@
         </div>
     </main>
     
-    <!-- Footer Section -->
+    <!-- Footer Section (No glass effect) -->
     <footer class="footer p-10 bg-neutral text-neutral-content mt-8">
-        <aside><i class="fas fa-credit-card text-3xl"></i><p class="font-bold text-lg">爱莉希雅近场通信<br><span class="font-normal">提供NFC相关工具</span></p><p class="text-sm">© Copyright 爱莉希雅近场通信. 本项目使用GPL v3.0协议开源.</p><p class="text-xs mt-2">版本: 1.7.0 (最终版)</p></aside> 
+        <aside><i class="fas fa-credit-card text-3xl"></i><p class="font-bold text-lg">爱莉希雅近场通信<br><span class="font-normal">提供NFC相关工具</span></p><p class="text-sm">© Copyright 爱莉希雅近场通信. 本项目使用GPL v3.0协议开源.</p><p class="text-xs mt-2">版本: 2.0.0</p></aside> 
         <nav><h6 class="footer-title">联系和源码</h6> <a href="https://github.com/Claylark/CNG-Web" target="_blank" class="link link-hover"><i class="fab fa-github"></i> 项目GitHub地址</a> <a href="mailto:0@elynfc.com" class="link link-hover"><i class="fas fa-envelope"></i> 站长邮箱</a></nav>
     </footer>
 
@@ -213,7 +222,7 @@
                 this.content.style.transform = `translateY(${startIndex * this.itemHeight}px)`;
                 this.content.innerHTML = visibleItems.map(card => {
                     const formattedCard = card.replace(/(\d{4})/g, '$1 ').trim();
-                    return `<div class="flex justify-between items-center bg-base-100 p-3 rounded-lg shadow mx-2 mb-2" style="height: ${this.itemHeight - 8}px;"><div class="font-mono text-lg">${formattedCard}</div><div class="flex gap-2"><button class="btn btn-xs btn-ghost btn-circle" title="复制卡号" onclick="copyToClipboard('${card}')"><i class="fas fa-copy"></i></button></div></div>`;
+                    return `<div class="flex justify-between items-center bg-base-100/50 p-3 rounded-lg shadow mx-2 mb-2" style="height: ${this.itemHeight - 8}px;"><div class="font-mono text-lg">${formattedCard}</div><div class="flex gap-2"><button class="btn btn-xs btn-ghost btn-circle" title="复制卡号" onclick="copyToClipboard('${card}')"><i class="fas fa-copy"></i></button></div></div>`;
                 }).join('');
             }
         };

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luhn算法银行卡生成器</title>
+    <title>ElyNFC-CNG|爱莉NFC自定义卡号工具</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -63,7 +63,8 @@
             padding: 30px;
             gap: 30px;
         }
-                .input-section {
+        
+        .input-section {
             flex: 1;
             min-width: 400px;
             padding: 25px;
@@ -143,7 +144,7 @@
             gap: 12px;
             margin-top: 10px;
         }
-               
+        
         .btn:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
@@ -235,7 +236,8 @@
             transition: all 0.3s ease;
             font-size: 1.1rem;
         }
-                .copy-btn:hover, .validate-btn:hover {
+        
+        .copy-btn:hover, .validate-btn:hover {
             background: #b21f1f;
             transform: scale(1.1);
         }
@@ -331,7 +333,8 @@
             align-items: center;
             gap: 10px;
         }
-                @media (max-width: 900px) {
+        
+        @media (max-width: 900px) {
             .content {
                 flex-direction: column;
             }
@@ -390,7 +393,10 @@
     <div class="container">
         <header>
             <h1>
-                        <p>使用Luhn校验算法生成有效的银行卡号。输入银行识别码(BIN)、自选部分和尾部数字，选择卡号长度，即可生成符合校验规则的银行卡号。</p>
+                <i class="fas fa-credit-card"></i>
+                ElyNFC自定义卡号生工具
+            </h1>
+            <p>本页面支持生成符合Luhn校验规则的卡号。请输入银行识别码(BIN)、自选部分和尾部数字，选择卡号长度，即可生成符合校验规则的银行卡号。</p>
         </header>
         
         <div class="content">
@@ -398,7 +404,7 @@
                 <div class="form-group">
                     <label for="bin"><i class="fas fa-building"></i> 银行识别码 (BIN) - 前6位</label>
                     <div class="input-wrapper">
-                        <input type="text" id="bin" placeholder="例如: 622576" maxlength="6" value="622576">
+                        <input type="text" id="bin" placeholder="例如: 621486" maxlength="6" value="621486">
                     </div>
                     <div class="error" id="bin-error">请输入6位数字的银行识别码</div>
                 </div>
@@ -415,7 +421,7 @@
                 <div class="form-group">
                     <label for="tail"><i class="fas fa-flag"></i> 尾部部分（4-6位数字或*）</label>
                     <div class="input-wrapper">
-                        <input type="text" id="tail" placeholder="例如: 56**78" maxlength="6" value="56**78">
+                        <input type="text" id="tail" placeholder="例如: **8888" maxlength="6" value="**8888">
                     </div>
                     <div class="error" id="tail-error">请输入4-6位数字或*</div>
                 </div>
@@ -446,6 +452,63 @@
                 
                 <div class="success-message" id="success-msg">
                     <i class="fas fa-check-circle"></i> 卡号已成功复制到剪贴板！
+                </div>
+                
+                <div class="warning-box">
+                    <h3><i class="fas fa-exclamation-triangle"></i> 注意</h3>
+                    <p>生成所有可能的卡号可能需要较长时间，特别是当有多个星号(*)时。请耐心等待，不要关闭页面。</p>
+                </div>
+                
+                <div class="info-box">
+                    <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
+                    <ul>
+                        <li><strong>BIN</strong> - 必须是6位数字（例如：621486）</li>
+                        <li><strong>自选部分</strong> - 可以包含数字和星号(*)，星号表示生成所有可能的数字（例如：12**34）</li>
+                        <li><strong>尾部部分</strong> - 4-6位数字或星号（例如：**8888）</li>
+                        <li><strong>卡号长度</strong> - 在12-19位之间</li>
+                        <li>生成所有可能的卡号组合并验证Luhn算法</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <div class="result-header">
+                    <h2><i class="fas fa-list"></i> 生成的卡号 <span class="card-type" id="card-type">VISA/MasterCard</span></h2>
+                    <div class="result-count" id="result-count">0 个</div>
+                </div>
+                
+                <div class="card-list" id="card-list">
+                    <div class="empty-state">
+                        <i class="fas fa-credit-card"></i>
+                        <h3>等待生成银行卡号</h3>
+                        <p>请填写左侧表单并点击"生成所有有效卡号"按钮</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Luhn校验算法
+        function luhnCheck(cardNumber) {
+            let total = 0;
+            const reverseDigits = cardNumber.split('').reverse();
+            
+            for (let i = 0; i < reverseDigits.length; i++) {
+                let digit = parseInt(reverseDigits[i]);
+                
+                if (i % 2 === 1) {
+                    digit *= 2;
+                    if (digit > 9) {
+                        digit -= 9;
+                    }
+                }
+                
+                total += digit;
+            }
+            
+            return total % 10 === 0;
+        }
 
         // 生成所有可能的数字替代*号
         function generateAllPossibleNumbers(input) {
@@ -468,6 +531,7 @@
             
             return replacements;
         }
+
         // 生成所有可能的卡号
         function generateAllCardNumbers() {
             const bin = document.getElementById('bin').value;
@@ -525,8 +589,8 @@
                             }
                         }
                     }
- 
-                     // 更新进度
+                    
+                    // 更新进度
                     currentIteration++;
                     const progress = (currentIteration / totalIterations) * 100;
                     document.getElementById('progress').style.width = `${progress}%`;
@@ -691,9 +755,9 @@
             });
             
             // 设置默认值
-            document.getElementById('bin').value = '622576';
-            document.getElementById('middle').value = '12**34';
-            document.getElementById('tail').value = '56**78';
+            document.getElementById('bin').value = '';
+            document.getElementById('middle').value = '';
+            document.getElementById('tail').value = '';
         });
     </script>
 </body>

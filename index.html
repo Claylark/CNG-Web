@@ -63,8 +63,7 @@
             padding: 30px;
             gap: 30px;
         }
-        
-        .input-section {
+                .input-section {
             flex: 1;
             min-width: 400px;
             padding: 25px;
@@ -144,7 +143,7 @@
             gap: 12px;
             margin-top: 10px;
         }
-        
+               
         .btn:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
@@ -184,3 +183,518 @@
             flex: 1;
             max-height: 450px;
             overflow-y: auto;
+            border: 1px solid #e0e4f5;
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+        }
+        
+        .card-item {
+            background: white;
+            padding: 18px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid #1a2a6c;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .card-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+            border-left-color: #b21f1f;
+        }
+        
+        .card-number {
+            font-family: 'Courier New', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #1a2a6c;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .copy-btn, .validate-btn {
+            background: #1a2a6c;
+            color: white;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+                .copy-btn:hover, .validate-btn:hover {
+            background: #b21f1f;
+            transform: scale(1.1);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #777;
+        }
+        
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #d0d5e6;
+            opacity: 0.7;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        
+        .error {
+            color: #d32f2f;
+            font-size: 1rem;
+            margin-top: 8px;
+            padding-left: 5px;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .success-message {
+            background: linear-gradient(to right, #4caf50, #2e7d32);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .card-type {
+            display: inline-block;
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            margin-left: 15px;
+        }
+        
+        .info-box {
+            background: linear-gradient(to right, #e8f4fd, #f0f5ff);
+            border-left: 5px solid #1a2a6c;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .info-box h3 {
+            margin-bottom: 15px;
+            color: #1a2a6c;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-box ul {
+            padding-left: 25px;
+        }
+        
+        .info-box li {
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+        
+        .warning-box {
+            background: #fff8e1;
+            border-left: 5px solid #ff9800;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .warning-box h3 {
+            color: #ff9800;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+                @media (max-width: 900px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .input-section, .output-section {
+                min-width: 100%;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            header {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 1.7rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .card-number {
+                font-size: 1.1rem;
+            }
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #e0e4f5;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .status-text {
+            text-align: center;
+            font-weight: 600;
+            color: #1a2a6c;
+            margin-bottom: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                        <p>使用Luhn校验算法生成有效的银行卡号。输入银行识别码(BIN)、自选部分和尾部数字，选择卡号长度，即可生成符合校验规则的银行卡号。</p>
+        </header>
+        
+        <div class="content">
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="bin"><i class="fas fa-building"></i> 银行识别码 (BIN) - 前6位</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="bin" placeholder="例如: 622576" maxlength="6" value="622576">
+                    </div>
+                    <div class="error" id="bin-error">请输入6位数字的银行识别码</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="middle"><i class="fas fa-asterisk"></i> 自选部分（数字或*）</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="middle" placeholder="例如: 12**34" value="12**34">
+                    </div>
+                    <div class="input-hint">使用*作为占位符，将自动生成所有可能的数字组合</div>
+                    <div class="error" id="middle-error">只能包含数字和*</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tail"><i class="fas fa-flag"></i> 尾部部分（4-6位数字或*）</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="tail" placeholder="例如: 56**78" maxlength="6" value="56**78">
+                    </div>
+                    <div class="error" id="tail-error">请输入4-6位数字或*</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="length"><i class="fas fa-ruler"></i> 卡号长度</label>
+                    <select id="length">
+                        <option value="12">12位卡号</option>
+                        <option value="13">13位卡号</option>
+                        <option value="14">14位卡号</option>
+                        <option value="15">15位卡号</option>
+                        <option value="16" selected>16位卡号</option>
+                        <option value="17">17位卡号</option>
+                        <option value="18">18位卡号</option>
+                        <option value="19">19位卡号</option>
+                    </select>
+                </div>
+                
+                <button id="generate-btn" class="btn">
+                    <i class="fas fa-bolt"></i> 生成所有有效卡号
+                </button>
+                
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                
+                <div class="status-text" id="status-text">正在生成卡号，请稍候...</div>
+                
+                <div class="success-message" id="success-msg">
+                    <i class="fas fa-check-circle"></i> 卡号已成功复制到剪贴板！
+
+        // 生成所有可能的数字替代*号
+        function generateAllPossibleNumbers(input) {
+            if (!input.includes('*')) {
+                return [input];
+            }
+            
+            const starCount = (input.match(/\*/g) || []).length;
+            const replacements = [];
+            const totalCombinations = Math.pow(10, starCount);
+            
+            for (let i = 0; i < totalCombinations; i++) {
+                let numStr = i.toString().padStart(starCount, '0');
+                let newStr = input;
+                for (let j = 0; j < starCount; j++) {
+                    newStr = newStr.replace('*', numStr[j]);
+                }
+                replacements.push(newStr);
+            }
+            
+            return replacements;
+        }
+        // 生成所有可能的卡号
+        function generateAllCardNumbers() {
+            const bin = document.getElementById('bin').value;
+            const middle = document.getElementById('middle').value;
+            const tail = document.getElementById('tail').value;
+            const length = parseInt(document.getElementById('length').value);
+            
+            // 验证输入
+            if (!validateInput(bin, middle, tail)) {
+                return [];
+            }
+            
+            // 显示进度条
+            document.getElementById('progress-bar').style.display = 'block';
+            document.getElementById('status-text').style.display = 'block';
+            document.getElementById('progress').style.width = '0%';
+            
+            // 生成所有可能的中间部分和尾部部分
+            const possibleMiddle = generateAllPossibleNumbers(middle);
+            const possibleTail = generateAllPossibleNumbers(tail);
+            
+            const cardNumbers = [];
+            
+            // 计算总迭代次数
+            const totalIterations = possibleMiddle.length * possibleTail.length;
+            let currentIteration = 0;
+            
+            // 遍历所有组合
+            for (const m of possibleMiddle) {
+                for (const t of possibleTail) {
+                    // 计算需要的填充长度
+                    const currentLength = bin.length + m.length + t.length;
+                    const paddingLength = length - currentLength;
+                    
+                    if (paddingLength < 0) {
+                        // 长度超过，跳过
+                        continue;
+                    }
+                    
+                    if (paddingLength === 0) {
+                        // 无需填充
+                        const cardNumber = bin + m + t;
+                        if (luhnCheck(cardNumber)) {
+                            cardNumbers.push(cardNumber);
+                        }
+                    } else {
+                        // 生成所有可能的填充组合
+                        const paddingCombinations = Math.pow(10, paddingLength);
+                        for (let i = 0; i < paddingCombinations; i++) {
+                            const padding = i.toString().padStart(paddingLength, '0');
+                            const cardNumber = bin + m + padding + t;
+                            
+                            if (cardNumber.length === length && luhnCheck(cardNumber)) {
+                                cardNumbers.push(cardNumber);
+                            }
+                        }
+                    }
+ 
+                     // 更新进度
+                    currentIteration++;
+                    const progress = (currentIteration / totalIterations) * 100;
+                    document.getElementById('progress').style.width = `${progress}%`;
+                }
+            }
+            
+            // 隐藏进度条
+            document.getElementById('progress-bar').style.display = 'none';
+            document.getElementById('status-text').style.display = 'none';
+            
+            return cardNumbers;
+        }
+
+        // 验证输入
+        function validateInput(bin, middle, tail) {
+            const binError = document.getElementById('bin-error');
+            const middleError = document.getElementById('middle-error');
+            const tailError = document.getElementById('tail-error');
+            let isValid = true;
+            
+            binError.style.display = 'none';
+            middleError.style.display = 'none';
+            tailError.style.display = 'none';
+            
+            // 验证BIN
+            if (bin.length !== 6 || !/^\d+$/.test(bin)) {
+                binError.style.display = 'block';
+                isValid = false;
+            }
+            
+            // 验证中间部分
+            if (middle && !/^[\d*]+$/.test(middle)) {
+                middleError.style.display = 'block';
+                isValid = false;
+            }
+            
+            // 验证尾部部分
+            if (!/^[\d*]{4,6}$/.test(tail)) {
+                tailError.style.display = 'block';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+
+        // 检测卡类型
+        function detectCardType(bin) {
+            if (bin.startsWith('4')) {
+                return 'VISA';
+            } else if (bin.startsWith('5')) {
+                return 'MasterCard';
+            } else if (bin.startsWith('34') || bin.startsWith('37')) {
+                return 'American Express';
+            } else if (bin.startsWith('62')) {
+                return 'UnionPay';
+            } else if (bin.startsWith('35')) {
+                return 'JCB';
+            }
+            return '未知类型';
+        }
+
+        // 复制卡号到剪贴板
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const successMsg = document.getElementById('success-msg');
+                successMsg.style.display = 'block';
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 3000);
+            });
+        }
+
+        // 显示生成的卡号
+        function displayCardNumbers(cardNumbers) {
+            const cardList = document.getElementById('card-list');
+            const resultCount = document.getElementById('result-count');
+            
+            if (cardNumbers.length === 0) {
+                cardList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3>未生成有效卡号</h3>
+                        <p>请尝试不同的输入参数或检查组合是否有效</p>
+                    </div>
+                `;
+                resultCount.textContent = '0 个';
+                return;
+            }
+            
+            // 更新卡片类型显示
+            const bin = document.getElementById('bin').value;
+            const cardType = detectCardType(bin);
+            document.getElementById('card-type').textContent = cardType;
+            
+            // 更新结果计数
+            resultCount.textContent = `${cardNumbers.length} 个`;
+            
+            // 生成卡号列表
+            let cardsHTML = '';
+            cardNumbers.forEach(card => {
+                // 格式化卡号显示
+                const formattedCard = card.replace(/(\d{4})/g, '$1 ').trim();
+                
+                cardsHTML += `
+                    <div class="card-item">
+                        <div class="card-number">${formattedCard}</div>
+                        <div class="card-actions">
+                            <button class="validate-btn" title="验证卡号" onclick="validateCard('${card}')">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="copy-btn" title="复制卡号" onclick="copyToClipboard('${card}')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cardList.innerHTML = cardsHTML;
+        }
+
+        // 验证卡号
+        function validateCard(cardNumber) {
+            const isValid = luhnCheck(cardNumber);
+            const message = isValid ? 
+                `卡号: ${cardNumber}\nLuhn校验: 通过 ✓\n有效卡号` : 
+                `卡号: ${cardNumber}\nLuhn校验: 未通过 ✗\n无效卡号`;
+            
+            alert(message);
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('generate-btn').addEventListener('click', () => {
+                // 清空之前的生成结果
+                document.getElementById('card-list').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <h3>正在生成卡号</h3>
+                        <p>请稍候，这可能需要一些时间...</p>
+                    </div>
+                `;
+                
+                // 使用setTimeout确保UI更新
+                setTimeout(() => {
+                    const cardNumbers = generateAllCardNumbers();
+                    displayCardNumbers(cardNumbers);
+                }, 100);
+            });
+            
+            // 添加输入验证
+            document.getElementById('bin').addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '').slice(0, 6);
+            });
+            
+            document.getElementById('middle').addEventListener('input', function() {
+                this.value = this.value.replace(/[^\d*]/g, '');
+            });
+            
+            document.getElementById('tail').addEventListener('input', function() {
+                this.value = this.value.replace(/[^\d*]/g, '').slice(0, 6);
+            });
+            
+            // 设置默认值
+            document.getElementById('bin').value = '622576';
+            document.getElementById('middle').value = '12**34';
+            document.getElementById('tail').value = '56**78';
+        });
+    </script>
+</body>
+</html>
